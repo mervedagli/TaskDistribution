@@ -1,0 +1,20 @@
+﻿@model TaskDistribution.Data.Modals.Task
+@{
+    ViewData["Title"] = "TaskAdd";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Görev Ekleme</h1>
+<br />
+@using(Html.BeginForm("TaskAdd","Task",FormMethod.Post))
+{
+    @Html.Label("Görev Adı")
+    @Html.TextBoxFor(x=>x.Task_NM,new {@class="form-control mt-2 mb-4"})
+
+    @Html.Label("Görev Detayı")
+    @Html.TextAreaFor(x=>x.Task_DSC,new {@class="form-control mt-2"})
+    <br />
+    <button class="btn btn-success">Kaydet</button>
+}
+
+

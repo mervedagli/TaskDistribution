@@ -1,0 +1,34 @@
+﻿@model List<TaskDistribution.Data.Modals.Task>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Görev Listesi</h1>
+<br />
+<div class="table-responsive table-bordered">
+    <div class=mb-2>
+        <a href="/Task/TaskAdd" class="btn btn-success">Ekle</a>
+    </div>
+    <table class="table">
+        <tr>
+            <th>Görev Adı</th>
+            <th>Görev Detay</th>
+            <th>Atanan Geliştirici</th>
+            <th>Görev Zorluk Seviyesi</th>
+            <th>Silme</th>
+            <th>Güncelleme</th>
+        </tr>
+        @foreach(var data in Model)
+        {
+            <tr>
+                <td>@data.Task_NM</td>
+                <td>@data.Task_DSC</td>
+                <td>@data.User.User_NM</td>
+                <td>@data.TaskDifficultType.TaskDifficultType_NM</td>
+                <td><a href="#" class="btn btn-danger">Sil</a></td>
+                <td><a href="#" class="btn btn-warning">Güncelle</a></td>
+            </tr>
+        }
+    </table>
+</div>
