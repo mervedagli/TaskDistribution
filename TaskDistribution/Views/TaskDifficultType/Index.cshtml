@@ -1,0 +1,24 @@
+﻿@model List<TaskDistribution.Data.Modals.TaskDifficultType>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Görev Zorluk Seviyeleri</h1>
+<br />
+<div class="table-responsive table-bordered">
+    <table class="table">
+        <tr>
+            <th>Zorluk Seviyesi Adı</th>
+            <th>Zorluk Seviyesi Derecesi</th>
+        </tr>
+        @foreach(var data in Model)
+        {
+            <tr>
+                <td>@data.TaskDifficultType_NM</td>
+                <td>@data.TaskDifficultType_NO</td>
+            </tr>
+        }
+    </table>
+</div>
+
