@@ -1,13 +1,16 @@
 ﻿@model TaskDistribution.Data.Modals.Task
 @{
-    ViewData["Title"] = "TaskAdd";
+    ViewData["Title"] = "TaskGetById";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-<h1>Görev Ekleme</h1>
+<h1>Görev Güncelleme</h1>
 <br />
-@using(Html.BeginForm("TaskAdd","Task",FormMethod.Post))
+@using(Html.BeginForm("TaskUpdate","Task",FormMethod.Post))
 {
+     @Html.Label("Görev Adı")
+    @Html.HiddenFor(x=>x.TaskID,new {@class="form-control mt-2 mb-4" })
+
     @Html.Label("Görev Adı")
     @Html.TextBoxFor(x=>x.Task_NM,new {@class="form-control mt-2 mb-4"})
     @Html.ValidationMessageFor(x=>x.Task_NM,"",new {@style="color:red"})
@@ -16,11 +19,9 @@
     @Html.TextAreaFor(x=>x.Task_DSC,new {@class="form-control mt-2"})
     if (ViewBag.sessionRole == "Software Analyst")
     {
-        @Html.Label("Görev Zorluk Seviyesi")
-        @Html.DropDownListFor(x=>x.TaskDifficultTypeID,(List<SelectListItem>)ViewBag.TaskDifficultTypeList,new {@class="form-control mt-2"})
+    @Html.Label("Görev Zorluk Seviyesi")
+    @Html.DropDownListFor(x=>x.TaskDifficultTypeID,(List<SelectListItem>)ViewBag.TaskDifficultTypeList,new {@class="form-control mt-2"})
     }
     <br />
     <button class="btn btn-success">Kaydet</button>
 }
-
-
