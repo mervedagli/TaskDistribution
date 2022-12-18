@@ -1,6 +1,7 @@
 ﻿using TaskDistribution.Data.Modals;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace TaskDistribution.Repositories
 {
@@ -52,6 +53,17 @@ namespace TaskDistribution.Repositories
             {
 
                 return await _dbContext.Set<TEntity>().Include(p).ToListAsync();
+            }
+        }
+        public async Task<TEntity?> GetByFilter(Expression<Func<TEntity, bool>> filter, string? c = null)
+        {
+            if (c!=null)
+            {
+                return await _dbContext.Set<TEntity>().Include(c).FirstOrDefaultAsync(filter);
+            }
+            else
+            {
+                return await _dbContext.Set<TEntity>().FirstOrDefaultAsync(filter);
             }
         }
     }

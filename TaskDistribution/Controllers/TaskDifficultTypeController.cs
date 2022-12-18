@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TaskDistribution.Repositories;
 
 namespace TaskDistribution.Controllers
@@ -14,6 +15,11 @@ namespace TaskDistribution.Controllers
         [Route("/TaskDifficultType/Index")]
         public async Task<IActionResult> Index()
         {
+            ViewBag.sessionRole = HttpContext.Session.GetString("username");
+            if (ViewBag.sessionRole == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
             var taskDifficultTypes=await _taskDifficultTypeRepository.GetAll();
             return View(taskDifficultTypes);
         }

@@ -7,27 +7,37 @@
 <h1>Görev Listesi</h1>
 <br />
 <div class="table-responsive table-bordered">
+    @if (ViewBag.sessionRole == "User")
+    {
     <div class=mb-2>
         <a href="/Task/TaskAdd" class="btn btn-success">Ekle</a>
     </div>
+    }
     <table class="table">
         <tr>
             <th>Görev Adı</th>
             <th>Görev Detay</th>
             <th>Atanan Geliştirici</th>
             <th>Görev Zorluk Seviyesi</th>
+            @if (ViewBag.sessionRole == "User")
+            {
             <th>Silme</th>
+            }
             <th>Güncelleme</th>
         </tr>
-        @foreach(var data in Model)
+        @foreach (var data in Model)
         {
+
             <tr>
                 <td>@data.Task_NM</td>
                 <td>@data.Task_DSC</td>
-                <td>@data.User.User_NM</td>
-                <td>@data.TaskDifficultType.TaskDifficultType_NM</td>
-                <td><a href="#" class="btn btn-danger">Sil</a></td>
-                <td><a href="#" class="btn btn-warning">Güncelle</a></td>
+                <td>@(data.User==null ? "Atanmamış" : data.User.User_NM)</td>
+                <td>@(data.TaskDifficultType==null ? "Belirlenmemiş" : data.TaskDifficultType.TaskDifficultType_NM)</td>
+                @if (ViewBag.sessionRole == "User")
+                {
+                <td><a href="/Task/TaskDelete/@data.TaskID" class="btn btn-danger">Sil</a></td>
+                }
+                <td><a href="/Task/TaskGetById/@data.TaskID" class="btn btn-warning">Güncelle</a></td>
             </tr>
         }
     </table>

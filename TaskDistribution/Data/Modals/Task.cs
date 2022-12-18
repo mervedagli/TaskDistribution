@@ -1,8 +1,11 @@
-﻿namespace TaskDistribution.Data.Modals
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TaskDistribution.Data.Modals
 {
     public class Task
     {
         public int TaskID { get; set; }
+        [Required(ErrorMessage ="Görev Adı Boş Olamaz.")]
         public string? Task_NM { get; set; }
         public string? Task_DSC { get; set; }
         public int? TaskDifficultTypeID { get; set; }
