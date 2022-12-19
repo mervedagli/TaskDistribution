@@ -41,6 +41,7 @@ builder.Services.AddSession();
 builder.Services.AddScoped<TaskDistributionContext>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<ITaskDifficultTypeRepository, TaskDifficultTypeRepository>();
+builder.Services.AddScoped<ITaskTypeRepository, TaskTypeRepository>();
 builder.Services.AddScoped<ILoginRepository, LoginRepository>();
 builder.Services.AddHttpContextAccessor();
 

@@ -9,9 +9,15 @@
 <div class="table-responsive table-bordered">
     @if (ViewBag.sessionRole == "User")
     {
-    <div class=mb-2>
-        <a href="/Task/TaskAdd" class="btn btn-success">Ekle</a>
-    </div>
+        <div class=mb-2>
+            <a href="/Task/TaskAdd" class="btn btn-success">Ekle</a>
+        </div>
+    }
+     @if (ViewBag.sessionRole == "Software Manager")
+    {
+        <div class=mb-2>
+            <a href="/Task/TaskAssignment" class="btn btn-success">Görevleri Ata</a>
+        </div>
     }
     <table class="table">
         <tr>
@@ -19,11 +25,17 @@
             <th>Görev Detay</th>
             <th>Atanan Geliştirici</th>
             <th>Görev Zorluk Seviyesi</th>
+            <th>Görev Tipi</th>
             @if (ViewBag.sessionRole == "User")
             {
-            <th>Silme</th>
+                <th>Silme</th>
             }
-            <th>Güncelleme</th>
+            @if (ViewBag.sessionRole == "User" || ViewBag.sessionRole == "Software Analyst")
+            {
+
+                <th>Güncelleme</th>
+            }
+
         </tr>
         @foreach (var data in Model)
         {
@@ -33,11 +45,15 @@
                 <td>@data.Task_DSC</td>
                 <td>@(data.User==null ? "Atanmamış" : data.User.User_NM)</td>
                 <td>@(data.TaskDifficultType==null ? "Belirlenmemiş" : data.TaskDifficultType.TaskDifficultType_NM)</td>
+                <td>@(data.TaskType==null ? "Belirlenmemiş" : data.TaskType.TaskType_NM)</td>
                 @if (ViewBag.sessionRole == "User")
                 {
-                <td><a href="/Task/TaskDelete/@data.TaskID" class="btn btn-danger">Sil</a></td>
+                    <td><a href="/Task/TaskDelete/@data.TaskID" class="btn btn-danger">Sil</a></td>
                 }
-                <td><a href="/Task/TaskGetById/@data.TaskID" class="btn btn-warning">Güncelle</a></td>
+                @if (ViewBag.sessionRole == "User" || ViewBag.sessionRole == "Software Analyst")
+                {
+                    <td><a href="/Task/TaskGetById/@data.TaskID" class="btn btn-warning">Güncelle</a></td>
+                }
             </tr>
         }
     </table>

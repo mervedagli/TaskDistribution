@@ -1,0 +1,23 @@
+﻿@model List<TaskDistribution.Data.Modals.TaskType>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Görev Tipleri</h1>
+<br />
+<div class="table-responsive table-bordered">
+    <table class="table">
+        <tr>
+            <th>Görev Tipi Adı</th>
+            <th>Görev Tipi Numarası</th>
+        </tr>
+        @foreach(var data in Model)
+        {
+            <tr>
+                <td>@data.TaskType_NM</td>
+                <td>@data.TaskType_NO</td>
+            </tr>
+        }
+    </table>
+</div>
