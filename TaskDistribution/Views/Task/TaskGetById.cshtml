@@ -22,6 +22,8 @@
     @Html.Label("Görev Zorluk Seviyesi")
     @Html.DropDownListFor(x=>x.TaskDifficultTypeID,(List<SelectListItem>)ViewBag.TaskDifficultTypeList,new {@class="form-control mt-2"})
     }
+    @Html.Label("Görev Tipi")
+    @Html.DropDownListFor(x=>x.TaskTypeID,(List<SelectListItem>)ViewBag.TaskTypeList,new {@class="form-control mt-2"}) 
     <br />
     <button class="btn btn-success">Kaydet</button>
 }

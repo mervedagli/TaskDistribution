@@ -10,11 +10,13 @@ namespace TaskDistribution.Controllers
     {
         private ITaskRepository _taskRepository;
         private ITaskDifficultTypeRepository _taskDifficultTypeRepository;
+        private ITaskTypeRepository _taskTypeRepository;
 
-        public TaskController(ITaskRepository taskRepository, ITaskDifficultTypeRepository taskDifficultTypeRepository)
+        public TaskController(ITaskRepository taskRepository, ITaskDifficultTypeRepository taskDifficultTypeRepository, ITaskTypeRepository taskTypeRepository)
         {
             _taskRepository = taskRepository;
             _taskDifficultTypeRepository = taskDifficultTypeRepository;
+            _taskTypeRepository = taskTypeRepository;
         }
         //[AllowAnonymous]
         [Route("Task/Index")]
@@ -40,6 +42,16 @@ namespace TaskDistribution.Controllers
                                                                  Value=x.TaskDifficultTypeID.ToString(),
                                                              }).ToList();
             ViewBag.TaskDifficultTypeList = taskDifficultTypeListItem;
+
+            var taskTypeList = (await _taskTypeRepository.GetAll());
+            List<SelectListItem> taskTypeListItem = (from x in taskTypeList
+                                                              select new SelectListItem
+                                                              {
+                                                                  Text = x.TaskType_NM,
+                                                                  Value = x.TaskTypeID.ToString(),
+                                                              }).ToList();
+            ViewBag.TaskTypeList = taskTypeListItem;
+
             ViewBag.sessionRole = HttpContext.Session.GetString("username");
             if (ViewBag.sessionRole == null)
             {
@@ -81,6 +93,15 @@ namespace TaskDistribution.Controllers
                                                               }).ToList();
             ViewBag.TaskDifficultTypeList = taskDifficultTypeListItem;
 
+            var taskTypeList = (await _taskTypeRepository.GetAll());
+            List<SelectListItem> taskTypeListItem = (from x in taskTypeList
+                                                     select new SelectListItem
+                                                     {
+                                                         Text = x.TaskType_NM,
+                                                         Value = x.TaskTypeID.ToString(),
+                                                     }).ToList();
+            ViewBag.TaskTypeList = taskTypeListItem;
+
             var task = await _taskRepository.Find(id);
             ViewBag.sessionRole = HttpContext.Session.GetString("username");
             if (ViewBag.sessionRole == null)
@@ -99,6 +120,15 @@ namespace TaskDistribution.Controllers
             }
             await _taskRepository.Update(task);
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [Route("Task/TaskAssignment")]
+        public async Task<IActionResult> TaskAssignment()
+        {
+
+            var x=await _taskRepository.Assignment();
+            return View();
         }
 
     }

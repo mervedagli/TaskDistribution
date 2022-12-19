@@ -12,5 +12,6 @@ namespace TaskDistribution.Data.Modals
         public DbSet<TaskDifficultType> TaskDifficultTypes => this.Set<TaskDifficultType>();
         public DbSet<User> Users => this.Set<User>();
         public DbSet<UserRole> UserRoles => this.Set<UserRole>();
+        public DbSet<TaskType> TaskTypes => this.Set<TaskType>();
     }
 }
