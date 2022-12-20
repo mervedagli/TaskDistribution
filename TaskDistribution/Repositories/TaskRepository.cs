@@ -41,12 +41,16 @@ namespace TaskDistribution.Repositories
                 var a = 0;
                 foreach (var item in nonAssignmentListGroupbyTaskType)
                 {
-                    var firstHarderTtask = item.difficultDesc.First();
-                    if (firstHarderTtask.UserID == null)
+                    foreach (var task in item.difficultDesc)
                     {
-                        firstHarderTtask.UserID = developerList[a].UserId;
-                        await Update(firstHarderTtask);
-                        a += 1;
+
+                       // var firstHarderTtask = item.difficultDesc.First();
+                        if (task.UserID == null)
+                        {
+                            task.UserID = developerList[a].UserId;
+                            await Update(task);
+                            a += 1;
+                        }
                     }
                 }
 
