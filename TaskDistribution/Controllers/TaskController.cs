@@ -22,7 +22,7 @@ namespace TaskDistribution.Controllers
         [Route("Task/Index")]
         public async Task<IActionResult> Index()
         {
-            var tasks=(await _taskRepository.TList("TaskDifficultType","User")).Where(x=>x.IsDeleted_FL==false).ToList();
+            var tasks=(await _taskRepository.TList("TaskDifficultType","User","TaskType")).Where(x=>x.IsDeleted_FL==false).ToList();
             ViewBag.sessionRole = HttpContext.Session.GetString("username");
             if (ViewBag.sessionRole==null)
             {

@@ -15,15 +15,15 @@ namespace TaskDistribution.Repositories
         public async  Task<IEnumerable<TaskDistribution.Data.Modals.Task>> Assignment()
         {
             // METOD HENÜZ BİTMEDİ DEVAM EDİYORUM.
-  
-            var assignmentList =_dbContext.Tasks.Where(x=>x.User.UserRoleID==2).ToList();
+
+            var assignmentList = _dbContext.Tasks.Where(x => x.User.UserRoleID == 2).ToList();
             var nonAssignmentList = _dbContext.Tasks.Where(x => x.UserID == null).ToList();
             var developerList = _dbContext.Users.Where(x => x.UserRoleID == 2).ToList();
 
             var nonAssignmentListGroupbyTaskType = nonAssignmentList.GroupBy(x => x.TaskTypeID).Select(a => new
-            {         
-                    typeId=a.Key,
-                    difficultDesc = a.OrderByDescending(x => x.TaskDifficultTypeID).ToList(),
+            {
+                typeId = a.Key,
+                difficultDesc = a.OrderByDescending(x => x.TaskDifficultTypeID).ToList(),
 
             }).ToList();
 
@@ -31,94 +31,120 @@ namespace TaskDistribution.Repositories
             {
                 userId = a.Key,
                 sum = a.Sum(x => x.TaskDifficultTypeID),
-                tasks=a.Select(x => x.TaskTypeID).ToList()
+                tasks = a.Select(x => x.TaskTypeID).ToList()
 
-            }).ToList().OrderBy(x=>x.sum).ToList();
+            }).ToList().OrderBy(x => x.sum).ToList();
 
-            foreach (var item in nonAssignmentListGroupbyTaskType)
+
+            if (assignmentListGroupbyDeveloper.Count() == 0)
             {
-                foreach (var task in item.difficultDesc)
+                var a = 0;
+                foreach (var item in nonAssignmentListGroupbyTaskType)
                 {
-                    var list = new List<KeyValuePair<int?, int>>();
-
-                    foreach (var dev in developerList)
+                    var firstHarderTtask = item.difficultDesc.First();
+                    if (firstHarderTtask.UserID == null)
                     {
-                        var developer = assignmentListGroupbyDeveloper.Where(x => x.userId == dev.UserId).FirstOrDefault();
+                        firstHarderTtask.UserID = developerList[a].UserId;
+                        await Update(firstHarderTtask);
+                        a += 1;
+                    }
+                }
 
 
-                        if (developer == null || !developer.tasks.Contains(item.typeId))
+            }
+            else if (assignmentListGroupbyDeveloper.Count() != developerList.Count())
+            {
+                var a = 0;
+                foreach (var dev in developerList)
+                {
+
+                    if (assignmentListGroupbyDeveloper.Where(x => x.userId == dev.UserId).FirstOrDefault() == null)
+                    {
+
+                        var firstHarderTtask = nonAssignmentListGroupbyTaskType[a].difficultDesc.First();
+                        if (firstHarderTtask.UserID == null)
                         {
-                            task.UserID = dev.UserId;
-                            await Update(task);
+                            firstHarderTtask.UserID = dev.UserId;
+                            await Update(firstHarderTtask);
+                            a += 1;
+                        }
 
-                            if (developer == null)
+                    }
+
+
+                }
+
+
+            }
+            else
+            {
+
+            }
+
+            // burdan sonrası pek doğru çalışmıyor
+            nonAssignmentList = _dbContext.Tasks.Where(x => x.UserID == null).ToList();
+
+            if (nonAssignmentList.Any())
+            {
+                assignmentList = _dbContext.Tasks.Where(x => x.User.UserRoleID == 2).ToList();
+
+                developerList = _dbContext.Users.Where(x => x.UserRoleID == 2).ToList();
+
+                nonAssignmentListGroupbyTaskType = nonAssignmentList.GroupBy(x => x.TaskTypeID).Select(a => new
+                {
+                    typeId = a.Key,
+                    difficultDesc = a.OrderByDescending(x => x.TaskDifficultTypeID).ToList(),
+
+                }).ToList();
+
+                assignmentListGroupbyDeveloper = assignmentList.GroupBy(x => x.UserID).Select(a => new
+                {
+                    userId = a.Key,
+                    sum = a.Sum(x => x.TaskDifficultTypeID),
+                    tasks = a.Select(x => x.TaskTypeID).ToList()
+                }).ToList().OrderBy(x => x.sum).ToList();
+
+                foreach (var item in nonAssignmentListGroupbyTaskType)
+                {
+                    foreach (var task in item.difficultDesc)
+                    {
+                        var list = new List<KeyValuePair<int?, int>>();
+
+                        foreach (var developer in assignmentListGroupbyDeveloper)
+                        {
+                            //var developer = assignmentListGroupbyDeveloper.Where(x => x.userId == dev.UserId).FirstOrDefault();
+
+
+                            if (!developer.tasks.Contains(item.typeId))
                             {
-                                assignmentList = _dbContext.Tasks.Where(x => x.User.UserRoleID == 2).ToList();
-                                assignmentListGroupbyDeveloper = assignmentList.GroupBy(x => x.UserID).Select(a => new
-                                {
-                                    userId = a.Key,
-                                    sum = a.Sum(x => x.TaskDifficultTypeID),
-                                    tasks = a.Select(x => x.TaskTypeID).ToList()
+                                task.UserID = developer.userId;
+                                await Update(task);
+                                developer.tasks.Add(item.typeId);
+                                // developer a ata, task listesinden atandı diye işaretle
 
-                                }).ToList().OrderBy(x => x.sum).ToList();
                             }
                             else
                             {
 
-                                developer.tasks.Add(item.typeId);
+                                var taskTypeCount = developer.tasks.Count(x => x == item.typeId);
+                                var pairList = new KeyValuePair<int?, int>(developer.userId, taskTypeCount);
+                                list.Add(pairList);
                             }
-                            break;
-                            // developer a ata, task listesinden atandı diye işaretle
-
-                            
                         }
-                        else{
-
-                            var taskTypeCount= developer.tasks.Count(x=>x==item.typeId);
-                            var pairList = new KeyValuePair<int?, int>(developer.userId, taskTypeCount);
-                            list.Add(pairList);
-                        }                     
-                    }
 
 
-                    if (task.UserID==null && assignmentListGroupbyDeveloper.Count()!=0)
-                    {
-                        var userID=list.OrderBy(x=>x.Value).FirstOrDefault().Key;
-                        task.UserID = userID;
-                        await Update(task);
-                        assignmentListGroupbyDeveloper.Where(x=>x.userId==userID).FirstOrDefault().tasks.Add(item.typeId);
-                    }
-                    else if(assignmentListGroupbyDeveloper.Count() == 0)
-                    {
-                        task.UserID = developerList.First().UserId;
-                        await Update(task);
-
-
-                        //var a = new SelectListItem()
-                        //{
-                        //    userId = task.UserID,
-                        //    sum = task.TaskTypeID,
-                        //    tasks = new List<int?>()
-                        //};
-                        assignmentList = _dbContext.Tasks.Where(x => x.User.UserRoleID == 2).ToList();
-                        assignmentListGroupbyDeveloper = assignmentList.GroupBy(x => x.UserID).Select(a => new
+                        if (task.UserID == null)
                         {
-                            userId = a.Key,
-                            sum = a.Sum(x => x.TaskDifficultTypeID),
-                            tasks = a.Select(x => x.TaskTypeID).ToList()
+                            var userID = list.OrderBy(x => x.Value).FirstOrDefault().Key;
+                            task.UserID = userID;
+                            await Update(task);
+                            assignmentListGroupbyDeveloper.Where(x => x.userId == userID).FirstOrDefault().tasks.Add(item.typeId);
 
-                        }).ToList().OrderBy(x => x.sum).ToList();
-
-                    }
-                    else
-                    {
+                        }
 
                     }
-
                 }
             }
-
-
 
             return assignmentList;
 
