@@ -43,11 +43,11 @@ namespace TaskDistribution.Repositories
         }
 
 
-        public async Task<IEnumerable<TEntity>> TList(string p, string? c=null)
+        public async Task<IEnumerable<TEntity>> TList(string p, string? c=null, string? d = null)
         {
             if (c!=null)
             {
-                return await _dbContext.Set<TEntity>().Include(p).Include(c).ToListAsync();
+                return await _dbContext.Set<TEntity>().Include(p).Include(c).Include(d).ToListAsync();
             }
             else
             {

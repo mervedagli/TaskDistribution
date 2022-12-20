@@ -9,7 +9,7 @@ namespace TaskDistribution.Repositories
         Task Add(TEntity entity);
         Task Remove(TEntity entity);
         Task Update(TEntity entity);
-        Task<IEnumerable<TEntity>> TList(string p,string? c=null);
+        Task<IEnumerable<TEntity>> TList(string p,string? c=null, string? d = null);
         Task<TEntity?> GetByFilter(Expression<Func<TEntity, bool>> filter, string? c = null);
     }
 }
